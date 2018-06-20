@@ -142,9 +142,14 @@ Ending test:   Try.create
 
 # action 3
 File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/NEDdriver/__init__.py,
-in def get_value_loc(self, locator):
+in def set_value(self, aid, param, value=''):
+original: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td='%s']" % (idname, value)
+change:   loc = "//div[contains(@id,'%s_menu')]/table/tbody/\
+              tr/td[text()='%s']" % (idname, value)
+
 original: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td[contains(.,'%s')]]" % (idname, value)
-change: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr/td[contains(.,'%s')]" % (idname, value)
+change:   loc = "//div[contains(@id,'%s_menu')]/table/tbody/\
+              tr/td[contains(.,'%s')]" % (idname, value)
 
 # ---------------------------------------------------------
 # bug scenario 4

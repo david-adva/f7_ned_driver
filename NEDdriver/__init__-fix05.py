@@ -406,10 +406,14 @@ class NEDdriver(object):
                 # dropdown list
                 elem.click()
                 try:
-                    loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td='%s']" % (idname, value)
+                    # loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td='%s']" % (idname, value)
+                    loc = "//div[contains(@id,'%s_menu')]/table/tbody/\
+                        tr/td[text()='%s']" % (idname, value)
                     self.click(loc)
                 except NoSuchElementException:
-                    loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr/td[contains(.,'%s')]" % (idname, value)
+                    # loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td[contains(.,'%s')]]" % (idname, value)
+                    loc = "//div[contains(@id,'%s_menu')]/table/tbody/\
+                        tr/td[contains(.,'%s')]" % (idname, value)
                     self.click(loc)
             else:
                 # element not recognized
@@ -1372,20 +1376,20 @@ class NEDdriver(object):
             raise RuntimeError('Parameter %s not found on aid %s' % (param, aid))
         return applname, blade
 
-        def typeeqpt_ned2exist(self, typeeqpt_ned):
-            '''
-            this method handles cases if a typeeqpt is not defined in self._jsdata
-            typeeqpt_ned: typeeqpt on NED
-            returns an existing typeeqpt in self._jsdata
-            '''
-            typeeqpt_new_to_exist = {
-                'EDFA-C-S20-GCB-DM': 'EDFA-SGCB',
-                'OSFM+#1510': 'OSFM'
-            }
+    def typeeqpt_ned2exist(self, typeeqpt_ned):
+        '''
+        this method handles cases if a typeeqpt is not defined in self._jsdata
+        typeeqpt_ned: typeeqpt on NED
+        returns an existing typeeqpt in self._jsdata
+        '''
+        typeeqpt_new_to_exist = {
+            'EDFA-C-S20-GCB-DM': 'EDFA-SGCB',
+            'OSFM+#1510': 'OSFM'
+        }
 
-            try:
-                typeeqpt_exist = typeeqpt_new_to_exist[typeeqpt_ned]
-            except KeyError:
-                typeeqpt_exist = typeeqpt_ned
+        try:
+            typeeqpt_exist = typeeqpt_new_to_exist[typeeqpt_ned]
+        except KeyError:
+            typeeqpt_exist = typeeqpt_ned
 
-            return typeeqpt_exist
+        return typeeqpt_exist
