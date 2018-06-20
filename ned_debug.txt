@@ -1,0 +1,394 @@
+# ----------------------------------------------------------
+# bug scenario 1
+# error msg for 
+# Get Entity Param    MOD-2-6    ADMIN
+# F7Library: 1.4.1
+# ---------------------------------------------------------
+
+20180509 13:34:14.855 : DEBUG : GET http://127.0.0.1:35616/session/93b61bfa-1a58-4a35-b6b2-d9ae3d59c89d/element/7fbb8ff9-9797-461b-9468-d412a4b56c37/text {"id": "7fbb8ff9-9797-461b-9468-d412a4b56c37"}
+20180509 13:34:14.881 : DEBUG : Finished Request
+20180509 13:34:14.970 :  FAIL : KeyError: ('TYPE__EQUIPMENT', u'OSFM+#1510')
+20180509 13:34:14.970 : DEBUG : 
+Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-60>", line 2, in get_entity_param
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 44, in get_entity_param
+    return self.ned.get_param(aid.name, str(key))
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 1127, in get_param
+    blade = self.seek_parameter(aid, param)[1]
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py", line 653, in seek_parameter
+    typeeqpt = self._jsdata.name2val['TYPE__EQUIPMENT', typeeqpt]
+Ending test:   Try.create
+
+# action 1
+File /home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py
+in def seek_parameter(self, aid, param, value=None, edit=False, history=False):
+original:   typeeqpt = self.get_value_loc(loctype)
+            typeeqpt = self._jsdata.name2val['TYPE__EQUIPMENT', typeeqpt]
+change:     # fix for card e.g. OSFM+#1510
+            typeeqpt_ned = self.get_value_loc(loctype)
+            typeeqpt_exist = self.typeeqpt_ned2exist(typeeqpt_ned)
+            typeeqpt = self._jsdata.name2val[
+                'TYPE__EQUIPMENT', typeeqpt_exist]
+added:  def typeeqpt_ned2exist(self, typeeqpt_ned):
+        '''
+        this method handles cases if a typeeqpt is not defined in self._jsdata
+        typeeqpt_ned: typeeqpt on NED
+        returns an existing typeeqpt in self._jsdata
+        '''
+        typeeqpt_new_to_exist = {
+            'EDFA-C-S20-GCB-DM': 'EDFA-SGCB',
+            'OSFM+#1510': 'OSFM'
+        }
+
+        try:
+            typeeqpt_exist = typeeqpt_new_to_exist[typeeqpt_ned]
+        except KeyError:
+            typeeqpt_exist = typeeqpt_ned
+
+        return typeeqpt_exist
+
+# ---------------------------------------------------------
+# bug scenario 2
+# error msg for 
+# Get Entity Param    MOD-2-6    ADMIN
+# after taking fix 1
+# ---------------------------------------------------------
+
+Parameter EP_ADMIN_FORCED not found in any application for module OSFM;aid MOD-2-6
+
+20180510 14:30:13.720 : DEBUG : GET http://127.0.0.1:59648/session/3584bba3-7745-42c4-800b-93c3f17b0ff5/element/eacd9616-f2c3-4df1-b9fd-d9af9ec5e721/text {"id": "eacd9616-f2c3-4df1-b9fd-d9af9ec5e721"}
+20180510 14:30:13.764 : DEBUG : Finished Request
+20180510 14:30:13.842 :  FAIL : Parameter EP_ADMIN_FORCED not found in any application for module OSFM;aid MOD-2-6
+20180510 14:30:13.843 : DEBUG : 
+Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-60>", line 2, in get_entity_param
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 44, in get_entity_param
+    return self.ned.get_param(aid.name, str(key))
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 1131, in get_param
+    self.seek_parameter(aid, param, edit=False)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py", line 671, in seek_parameter
+    % (param, typeeqpt, aid))
+Ending test:   Try.create
+
+# action 2
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def get_param(self, aid, param):
+comment out line: param = 'EP_ADMIN_FORCED'
+
+# ---------------------------------------------------------
+# bug scenario 3
+# error msg for
+# Set Entity Param    MOD-2-8    ADMIN=MT
+# ---------------------------------------------------------
+
+20180509 13:40:42.599 : DEBUG : POST http://127.0.0.1:37823/session/6961225f-c815-4d54-b75a-93ecfe2c5e9a/element/ed8d822b-039c-42cd-83bc-aea54f2eaaed/click {"id": "ed8d822b-039c-42cd-83bc-aea54f2eaaed"}
+20180509 13:40:42.844 : DEBUG : Finished Request
+20180509 13:40:42.932 :  FAIL : Exception
+20180509 13:40:42.932 : DEBUG : 
+Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/__init__.py", line 137, in method
+    return func(self, *chain(args, (key, value)))
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-63>", line 2, in set_entity_param
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 110, in set_entity_param
+    return self.ned.set_entity_param(aid.name, key, value)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 1547, in set_entity_param
+    raise Exception
+Ending test:   Try.create
+
+# action 3
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/NEDdriver/__init__.py,
+in def get_value_loc(self, locator):
+original: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td[contains(.,'%s')]]" % (idname, value)
+change: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr/td[contains(.,'%s')]" % (idname, value)
+
+# ---------------------------------------------------------
+# bug scenario 4
+# error msg for
+# Create Entity    MOD-2-8    ROADMNO=3
+# provision an inserted module
+# ---------------------------------------------------------
+
+20180605 17:21:47.146 :  FAIL : 
+NoSuchElementException: Message: Not possible to click element //span[@id='_SHELF-2;tree']/span
+
+20180605 17:21:47.147 : DEBUG : 
+Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 127, in method
+    return func(self, *chain(args[:nposargs], varargs), **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 100, in method
+    return func(self, *posargs, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-66>", line 2, in create_entity
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 178, in create
+    return self.ned.create_module(aid.name, **keys_and_values)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 413, in create_module
+    raise ex
+Ending test:   Try.create
+
+# action 4
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def create_module(self, aid, **keys_and_values):
+added: self._wait_loading(loc)
+after: # click on the shelf
+       loc = "//span[@id='_SHELF-%s;tree']/span" % shelf
+
+# ---------------------------------------------------------
+# bug scenario 5
+# error msg for
+# Create Entity    MOD-11-1    ROADMNO=1    TYPE__EQUIPMENT=4ROADM-C96
+# (pre-provision a module)
+# ---------------------------------------------------------
+
+20180605 18:06:21.385 :  FAIL : loc = //*[@id='_MOD-11-1;EQPT-VARIANT'], elem.tag_name = input,             elem.get_attribute('type') = text,             elem.get_attribute('role') = textbox
+20180605 18:06:21.385 : DEBUG : 
+Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 127, in method
+    return func(self, *chain(args[:nposargs], varargs), **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 100, in method
+    return func(self, *posargs, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-66>", line 2, in create_entity
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 178, in create
+    return self.ned.create_module(aid.name, **keys_and_values)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 414, in create_module
+    raise ex
+Ending test:   Try.create
+
+# action 5
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/NEDdriver/__init__.py
+in def set_value(self, aid, param, value=''):
+original: self.click("//*[@id='%s_popup']" % idname)
+change: loc = "//*[@id='%s_popup']" % idname
+        self._wait_loading(loc)
+        self.click(loc)
+
+# ---------------------------------------------------------
+# bug scenario 6
+# error msg for
+# Create Entity    OM-11-1-N
+# ---------------------------------------------------------
+
+# action 6
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def create_entity(self, aid, **keys_and_values):
+after blade = self.seek_parameter(aid, 'EP_AID')[1]
+added:  # to create OM
+        if aidtype in ['OM']:
+            blade = 'Ports'
+            loc = "//span[contains(., '%s')]" % blade
+            self.click(loc)
+
+# ---------------------------------------------------------
+# bug scenario 7
+# error msg for
+# Create Entity    VCH-11-1-N-19590
+# ---------------------------------------------------------
+
+# action 7
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def create_entity(self, aid, **keys_and_values):
+after the branch of: if aidtype in ['OM']:
+added:  # to create VCH
+        elif aidtype in ['VCH']:
+            # to get TYPEEQPT of Mod
+            if len(aid.split('-')) >= 2:
+                shelf = aid.split('-')[1]
+            if len(aid.split('-')) >= 3:
+                slot = aid.split('-')[2]
+            loc = "//span[@id='_MOD-%s-%s;tree']/span" % (shelf, slot)
+            typeeqpt = self.get_value_loc(loc)
+            typeeqpt = self._jsdata.name2val['TYPE__EQUIPMENT', typeeqpt]
+            # to create VCH of a ROADM/CCM
+            if 'ROADM' in typeeqpt or '9CCM' in typeeqpt:
+                # firstly clear the drop down filter
+                loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+                self.click(loc)
+                # then check Advanced checkbox; click it if it's not checked
+                loc = "//*[@id='showAdvancedPanel']"
+                checkbox_state = self[loc].get_attribute('aria-pressed')
+                if checkbox_state == 'false':
+                    self.click(loc)
+                # ready to continue
+                blade = 'Optical Channels'
+
+# ---------------------------------------------------------
+# bug scenario 8
+# error msg for
+# Create Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590    PATH-NODE=1
+# ---------------------------------------------------------
+
+# action 8
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def create_crsch(self, aid, **keys_and_values):
+after: bladename = re.sub(r'[^\w]', '', blade).lower()
+added:  # changes on 06/12/2018: start
+        if 'ROADM' not in typeeqpt and '9CCM' not in typeeqpt:
+            # changes on 06/12/2018: end
+
+after: if 'ROADM' in typeeqpt or '9CCM' in typeeqpt:
+added:  # changes on 06/12/2018: start
+        # firstly clear the drop down filter
+        loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+        self.click(loc)
+        # then check Advanced checkbox
+        # click it if it's not checked
+        loc = "//*[@id='showAdvancedPanel']"
+        checkbox_state = self[loc].get_attribute('aria-pressed')
+        if checkbox_state == 'false':
+            self.click(loc)
+        # click "Add Connection"
+        blade = 'Optical Channels'
+        loc = "_%s;add-connection" % bladename
+        self.click(loc)
+        self._wait_loading()
+        # changes on 06/12/2018: end
+
+# ---------------------------------------------------------
+# bug scenario 9
+# error msg for
+# Delete Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590
+# ---------------------------------------------------------
+
+# action 9
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def destroy_crsch(self, aid, force=False):
+before: # opening detail window of CRS
+added:  # changes on 06/12/2018: start
+        # for ROADM/CCM
+        if aidfromtype in ['VCH']:
+            # firstly clear the drop down filter
+            loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+            self.click(loc)
+            # then pick the port
+            port_from = aidfrom.rpartition('-')[0].replace('VCH', 'OM')
+            self.set_value('opticalchannels', 'filter', port_from)
+
+            # expand the channel
+            loc = "//span[@id='_%s;CHANNEL__PROVISION']/../div[\
+                contains(@id, 'dojox_grid__Expando')]" % aidfrom
+            self.click(loc)
+        # changes on 06/12/2018: end
+
+# ---------------------------------------------------------
+# bug scenario 10
+# error msg for
+# Create Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590    PATH-NODE=1    TYPE__FACILITY=OPTICAL
+# ---------------------------------------------------------
+
+20180613 20:24:21.726 :  FAIL : KeyError: ('TYPE__FACILITY', u'OPTICAL')
+20180613 20:24:21.727 : DEBUG : 
+Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 127, in method
+    return func(self, *chain(args[:nposargs], varargs), **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 100, in method
+    return func(self, *posargs, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-66>", line 2, in create_entity
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 184, in create
+    return self.ned.create_crsch(aid.name, **keys_and_values)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 722, in create_crsch
+    raise ex
+Ending test:   Try.Create Crs
+
+# action 10
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def create_crsch(self, aid, **keys_and_values):
+original:   type_fac = self._jsdata.name2val[
+                'TYPE__FACILITY', keys_and_values['TYPE__FACILITY']
+            ]
+changes:    type_fac = self._jsdata.val2name[
+                'TYPE__FACILITY', keys_and_values['TYPE__FACILITY']
+            ]
