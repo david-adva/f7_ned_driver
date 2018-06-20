@@ -29,15 +29,15 @@ Create Om
     #    Create Entity    ${r1_om_n}
     Create Entity    ${r2_om_c2}
 
-Create Crs-EoU
+Create Crs-EOU
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
     ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
     ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
-    Create Entity    ${crs_add}    PATH-NODE=1    EOU=TRUE
-    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL    EOU=TRUE
+    Create Entity    ${crs_add}    PATH-NODE=1    EOU=${True}
+    #    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL    EOU=${True}
 
 Create Vch
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
@@ -55,7 +55,7 @@ Create Crs
     ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
     #    Create Entity    ${crs_add}    PATH-NODE=1    EOU=${True}
-    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    EOU=${True}    TYPE__FACILITY=OPTICAL
+    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
 
 Delete Crs
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
