@@ -629,7 +629,7 @@ class NEDSession(NEDdriver):
 
                     # Facility
                     if 'TYPE__FACILITY' in keys_and_values:
-                        type_fac = self._jsdata.name2val[
+                        type_fac = self._jsdata.val2name[
                             'TYPE__FACILITY',
                             keys_and_values['TYPE__FACILITY']
                         ]
@@ -1508,6 +1508,22 @@ class NEDSession(NEDdriver):
                 self.seek_parameter(aidfrom, 'EP_AID')
             self._wait_loading()
 
+            # changes on 06/12/2018: start
+            # for ROADM/CCM
+            if aidfromtype in ['VCH']:
+                # firstly clear the drop down filter
+                loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+                self.click(loc)
+                # then pick the port
+                port_from = aidfrom.rpartition('-')[0].replace('VCH', 'OM')
+                self.set_value('opticalchannels', 'filter', port_from)
+
+                # expand the channel
+                loc = "//span[@id='_%s;CHANNEL__PROVISION']/../div[\
+                    contains(@id, 'dojox_grid__Expando')]" % aidfrom
+                self.click(loc)
+            # changes on 06/12/2018: end
+            
             # opening detail window of CRS
             loc = "//td[span[@id[contains(.,'_%s')]]]" % aid
             self.click(loc)
