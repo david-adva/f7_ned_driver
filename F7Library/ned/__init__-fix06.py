@@ -298,11 +298,13 @@ class NEDSession(NEDdriver):
             blade = self.seek_parameter(aid, 'WKG-AID')[1]
         else:
             blade = self.seek_parameter(aid, 'EP_AID')[1]
-            # to create OM
-            if aidtype in ['OM']:
-                blade = 'Ports'
-                loc = "//span[contains(., '%s')]" % blade
-                self.click(loc)
+
+        # to create OM
+        if aidtype in ['OM']:
+            blade = 'Ports'
+            loc = "//span[contains(., '%s')]" % blade
+            self.click(loc)
+
         # open wizard
         bladename = re.sub(r'[^\w]', '', blade).lower()
 

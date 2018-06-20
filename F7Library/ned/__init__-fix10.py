@@ -298,33 +298,35 @@ class NEDSession(NEDdriver):
             blade = self.seek_parameter(aid, 'WKG-AID')[1]
         else:
             blade = self.seek_parameter(aid, 'EP_AID')[1]
-            # to create OM
-            if aidtype in ['OM']:
-                blade = 'Ports'
-                loc = "//span[contains(., '%s')]" % blade
+
+        # to create OM
+        if aidtype in ['OM']:
+            blade = 'Ports'
+            loc = "//span[contains(., '%s')]" % blade
+            self.click(loc)
+        # to create VCH
+        elif aidtype in ['VCH']:
+            # to get TYPEEQPT of Mod
+            if len(aid.split('-')) >= 2:
+                shelf = aid.split('-')[1]
+            if len(aid.split('-')) >= 3:
+                slot = aid.split('-')[2]
+            loc = "//span[@id='_MOD-%s-%s;tree']/span" % (shelf, slot)
+            typeeqpt = self.get_value_loc(loc)
+            typeeqpt = self._jsdata.name2val['TYPE__EQUIPMENT', typeeqpt]
+            # to create VCH of a ROADM/CCM
+            if 'ROADM' in typeeqpt or '9CCM' in typeeqpt:
+                # firstly clear the drop down filter
+                loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
                 self.click(loc)
-            # to create VCH
-            elif aidtype in ['VCH']:
-                # to get TYPEEQPT of Mod
-                if len(aid.split('-')) >= 2:
-                    shelf = aid.split('-')[1]
-                if len(aid.split('-')) >= 3:
-                    slot = aid.split('-')[2]
-                loc = "//span[@id='_MOD-%s-%s;tree']/span" % (shelf, slot)
-                typeeqpt = self.get_value_loc(loc)
-                typeeqpt = self._jsdata.name2val['TYPE__EQUIPMENT', typeeqpt]
-                # to create VCH of a ROADM/CCM
-                if 'ROADM' in typeeqpt or '9CCM' in typeeqpt:
-                    # firstly clear the drop down filter
-                    loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+                # then check Advanced checkbox; click it if it's not checked
+                loc = "//*[@id='showAdvancedPanel']"
+                checkbox_state = self[loc].get_attribute('aria-pressed')
+                if checkbox_state == 'false':
                     self.click(loc)
-                    # then check Advanced checkbox; click it if it's not checked
-                    loc = "//*[@id='showAdvancedPanel']"
-                    checkbox_state = self[loc].get_attribute('aria-pressed')
-                    if checkbox_state == 'false':
-                        self.click(loc)
-                    # ready to continue
-                    blade = 'Optical Channels'
+                # ready to continue
+                blade = 'Optical Channels'
+
         # open wizard
         bladename = re.sub(r'[^\w]', '', blade).lower()
 
@@ -1523,7 +1525,7 @@ class NEDSession(NEDdriver):
                     contains(@id, 'dojox_grid__Expando')]" % aidfrom
                 self.click(loc)
             # changes on 06/12/2018: end
-            
+
             # opening detail window of CRS
             loc = "//td[span[@id[contains(.,'_%s')]]]" % aid
             self.click(loc)
