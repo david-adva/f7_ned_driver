@@ -86,6 +86,9 @@ Destroy
 Force Delete
     Force Destroy Entity    MOD-11-4
 
+empty
+    No Operation
+
 *** Keywords ***
 Suite Setup
     [Arguments]    ${name}    ${ip}
