@@ -54,10 +54,25 @@ Create Crs
     ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
     ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
-    #    Create Entity    ${crs_add}    PATH-NODE=1    EOU=${True}
-    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
+    Create Entity    ${crs_add}    PATH-NODE=1
+    #    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
+
+Set Crs
+    ${ch1}    Set Variable    19500
+    ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
+    ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
+    ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
+    ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
+    ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
+    ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
+    #    Set Entity Param    ${crs_add}    ADMIN=DSBLD
+    #    Set Entity Param    ${crs_drop}    ADMIN=DSBLD
+    #    Set Entity Param    MOD-11-7    ADMIN=DSBLD
+    #    ${admin}    Get Entity Param    MOD-2-6    ADMIN
+    Set Entity Param    MOD-2-18    ADMIN=MT
 
 Delete Crs
+    ${ch1}    Set Variable    19500
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
@@ -66,10 +81,6 @@ Delete Crs
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
     Destroy Entity    ${crs_add}
     Destroy Entity    ${crs_drop}
-
-Set
-    Set Entity Param    ${aid}    ADMIN    MT
-    Set Entity Param    ${aid}    ADMIN=IS
 
 Get
     #    ${admin}    Get Entity Param    MOD-2-6    ADMIN

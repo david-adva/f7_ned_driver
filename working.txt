@@ -1,0 +1,88 @@
+# case 0: passed
+# for 4ROADM
+# Set Entity Param MOD-11-7 ADMIN=MT
+
+17:35:06.584    INFO    
+calling seek_parameter, aid = MOD-11-7, param = ADMIN, edit = True
+module = 7, typeeqpt = SH9HU
+param = ADMIN, typeeqpt = SH9HU
+check1
+('Configure', None)
+
+calling seek_parameter, aid = MOD-11-7, param = EP_ADMIN_FORCED, edit = True
+param = EP_ADMIN_FORCED, typeeqpt = 4ROADM-C96
+check1
+('Configure', u'')  
+
+
+# case 1: failed
+# Set Entity Param MOD-2-6 ADMIN=IS
+
+14:11:06.337    INFO    
+calling seek_parameter, aid = MOD-2-6, param = ADMIN, edit = True
+module = 6, typeeqpt = SH9HU
+param = ADMIN, typeeqpt = SH9HU
+check1
+('Configure', None)
+
+calling seek_parameter, aid = MOD-2-6, param = EP_ADMIN_FORCED, edit = True
+module = 6, typeeqpt = SH9HU
+typeeqpt_ned = OSFM+#1510, typeeqpt_exist = OSFM, typeeqpt = OSFM
+   
+14:11:06.677    FAIL    Parameter EP_ADMIN_FORCED not found in any application for module OSFM;aid MOD-2-6  
+14:11:06.678    DEBUG   Traceback (most recent call last):
+  File "<decorator-gen-2>", line 2, in run_keyword
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 25, in caller
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/base.py", line 53, in run_keyword
+    return keyword(*args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 199, in __call__
+    reraise(*error)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/__init__.py", line 178, in __call__
+    result = func(self.libinstance, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 152, in method
+    return func(self, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/__init__.py", line 137, in method
+    return func(self, *chain(args, (key, value)))
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/dynamiclib/library/keywords/deco.py", line 227, in func
+    return original_func(self, *args, **kwargs)
+  File "<decorator-gen-66>", line 2, in set_entity_param
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/f7_aid/aiddeco.py", line 69, in aid_func
+    return (group.func or func)(self, aid, *args, **kwargs)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/keywords.py", line 110, in set_entity_param
+    return self.ned.set_entity_param(aid.name, key, value)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/F7Library/ned/__init__.py", line 1591, in set_entity_param
+    applname, blade = self.seek_parameter(aid, key, edit=True)
+  File "/home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py", line 693, in seek_parameter
+    % (param, typeeqpt, aid))   
+
+
+# case 2: passed
+# ${admin} Get Entity Param MOD-2-6 ADMIN
+
+14:02:18.533    INFO    
+calling seek_parameter, aid = MOD-2-6, param = ADMIN, edit = False
+module = 6, typeeqpt = SH9HU
+param = ADMIN, typeeqpt = SH9HU
+check1
+('Configure', None)
+
+calling seek_parameter, aid = MOD-2-6, param = ADMIN, edit = False
+module = 6, typeeqpt = SH9HU
+typeeqpt_ned = OSFM+#1510, typeeqpt_exist = OSFM, typeeqpt = OSFM
+param = ADMIN, typeeqpt = OSFM
+check1
+('Configure', u'')  
+14:02:18.534    INFO    ${admin} = MT
+
+# Set Entity Param MOD-2-6 ADMIN=IS
+
+14:02:26.492    INFO    
+calling seek_parameter, aid = MOD-2-6, param = ADMIN, edit = True
+module = 6, typeeqpt = SH9HU
+typeeqpt_ned = OSFM+#1510, typeeqpt_exist = OSFM, typeeqpt = OSFM
+param = ADMIN, typeeqpt = OSFM
+check1
+('Configure', u'')
+
+
