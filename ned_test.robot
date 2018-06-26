@@ -13,13 +13,20 @@ ${r2_slot}        1
 ${ch1}            19590
 
 *** Test Cases ***
-Create Mod
+Mod-Create+Delete
+    ${r1_mod}    Set Variable    MOD-${r1_sh}-${r1_slot}
+    ${r2_mod}    Set Variable    MOD-${r2_sh}-${r2_slot}
+    Create Entity    ${r1_mod}    ROADMNO=1    TYPE__EQUIPMENT=4ROADM-C96    ADMIN=IS    MODE=N-FIXED    CHA__SPC=FLEX
+    ...    CHANNELS=96    ALIAS=min
+    #    Create Entity    MOD-11-9    TYPE__EQUIPMENT=4WCC10G
+
+Mod-Create
     ${r1_mod}    Set Variable    MOD-${r1_sh}-${r1_slot}
     ${r2_mod}    Set Variable    MOD-${r2_sh}-${r2_slot}
     Create Entity    ${r1_mod}    ROADMNO=1    TYPE__EQUIPMENT=4ROADM-C96    ADMIN=IS    MODE=N-FIXED    CHA__SPC=FLEX
     ...    CHANNELS=96    ALIAS=min
 
-Create Om
+Om-Create+Delete
     ${r1_om_n}    Set Variable    OM-${r1_sh}-${r1_slot}-N
     ${r1_om_c1}    Set Variable    OM-${r1_sh}-${r1_slot}-C1
     ${r2_om_n}    Set Variable    OM-${r2_sh}-${r2_slot}-N
@@ -29,7 +36,17 @@ Create Om
     #    Create Entity    ${r1_om_n}
     Create Entity    ${r2_om_c2}
 
-Create Crs-EOU
+Om-Create
+    ${r1_om_n}    Set Variable    OM-${r1_sh}-${r1_slot}-N
+    ${r1_om_c1}    Set Variable    OM-${r1_sh}-${r1_slot}-C1
+    ${r2_om_n}    Set Variable    OM-${r2_sh}-${r2_slot}-N
+    ${r2_om_c2}    Set Variable    OM-${r2_sh}-${r2_slot}-C2
+    #    Create Entity    ${r1_om_n}    ADMIN=IS    OPTSET=-19    TILT=-1    OFFSET=2
+    #    Create Entity    ${r1_om_c1}    ADMIN=IS
+    #    Create Entity    ${r1_om_n}
+    Create Entity    ${r2_om_c2}
+
+Crs-Create-EOU
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
@@ -39,7 +56,7 @@ Create Crs-EOU
     Create Entity    ${crs_add}    PATH-NODE=1    EOU=${True}
     #    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL    EOU=${True}
 
-Create Vch
+Vch-Create+Delete
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
@@ -47,7 +64,15 @@ Create Vch
     Create Entity    ${r1_vch_n_ch1}    ADMIN=IS    CHAN-BW=50G    EQLZ-ADMIN=ENABLE
     Create Entity    ${r1_vch_c1_ch1}    ADMIN=IS    CHAN-BW=50G
 
-Create Crs
+Vch-Create
+    ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
+    ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
+    ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
+    ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
+    Create Entity    ${r1_vch_n_ch1}    ADMIN=IS    CHAN-BW=50G    EQLZ-ADMIN=ENABLE
+    Create Entity    ${r1_vch_c1_ch1}    ADMIN=IS    CHAN-BW=50G
+
+Crs-Create+Delete
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
@@ -55,9 +80,19 @@ Create Crs
     ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
     Create Entity    ${crs_add}    PATH-NODE=1
-    #    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
+    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
 
-Set Crs
+Crs-Create
+    ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
+    ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
+    ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
+    ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
+    ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
+    ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
+    Create Entity    ${crs_add}    PATH-NODE=1
+    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
+
+Crs-Set
     ${ch1}    Set Variable    19500
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
@@ -71,8 +106,8 @@ Set Crs
     #    ${admin}    Get Entity Param    MOD-2-6    ADMIN
     Set Entity Param    MOD-2-18    ADMIN=MT
 
-Delete Crs
-    ${ch1}    Set Variable    19500
+Crs-Delete
+    ${ch1}    Set Variable    19590
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
@@ -81,6 +116,15 @@ Delete Crs
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
     Destroy Entity    ${crs_add}
     Destroy Entity    ${crs_drop}
+
+Vch-Delete
+    Destroy Entity    ${aid}
+
+Om-Delete
+    Destroy Entity    ${aid}
+
+Mod-Delete
+    Destroy Entity    ${aid}
 
 Get
     #    ${admin}    Get Entity Param    MOD-2-6    ADMIN
@@ -91,10 +135,7 @@ Get
     #    ${type}    Get Entity Param    MOD-2-7    TYPE__EQUIPMENT
     ${type}    Get Entity Param    MOD-2-8    TYPE__EQUIPMENT
 
-Destroy
-    Destroy Entity    ${aid}
-
-Force Delete
+Mod-Force Delete
     Force Destroy Entity    MOD-11-4
 
 empty
@@ -105,6 +146,7 @@ Suite Setup
     [Arguments]    ${name}    ${ip}
     Open Named Connection    ${name}    ${ip}
 
-Suite Teardown
+Sui#te Teardown
     [Arguments]    ${name}
-    Close Connection    ${name}
+    Close Connection #
+    ${n####ame}

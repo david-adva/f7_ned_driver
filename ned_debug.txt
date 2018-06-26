@@ -397,3 +397,15 @@ original:   type_fac = self._jsdata.name2val[
 changes:    type_fac = self._jsdata.val2name[
                 'TYPE__FACILITY', keys_and_values['TYPE__FACILITY']
             ]
+
+# ---------------------------------------------------------
+# bug scenario 11
+# error msg for
+# Create Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590
+# ---------------------------------------------------------
+
+# action 11
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__init__.py
+in def create_crsch(self, aid, **keys_and_values):
+original: self.set_value('wizard', 'localPort', linkedlabel)
+change:   self.set_value('wizard', 'linkedPort', linkedlabel)
