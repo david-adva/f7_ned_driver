@@ -544,7 +544,7 @@ class NEDSession(NEDdriver):
                     directnto = self._jsdata.name2val['DIRECTN', directnto]
                     directnfrom = self._jsdata.name2val['DIRECTN', directnfrom]
 
-                # open wizard if not for ROADM/CCM
+                # open wizard
                 bladename = re.sub(r'[^\w]', '', blade).lower()
                 # changes on 06/12/2018: start
                 if 'ROADM' not in typeeqpt and '9CCM' not in typeeqpt:
@@ -559,16 +559,46 @@ class NEDSession(NEDdriver):
                     # firstly clear the drop down filter
                     loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
                     self.click(loc)
-                    # temp code: start
-                    # for Ease of Use
+
                     if EOU:
-                        self.click("_opticalchannels;add-channel")
-                        print('check1')
-                        # direction:
-                        direction = "steerableAddDrop"
-                        self.set_value('wizard', 'crossType', direction)
-                        return
+                        # for EOU create
+                        # ignore "Advanced" checkbox
+
+                        # click "Add"
+                        blade = 'Optical Channels'
+                        loc = "_%s;add-channel" % bladename
+                        self.click(loc)
+                        self._wait_loading()
+                        # CrossType
+                        if 'CROSS_TYPE' in keys_and_values:
+                            crosstype_dic = {
+                                "2WAY_PASS": 'passThrough',
+                                'ADD_DROP': 'addDrop',
+                                'STEERABLE_ADDDROP': 'steerableAddDrop',
+                                '1WAY_PASS': 'passThru',
+                                'ADD': 'add',
+                                'DROP': 'drop',
+                                'STEERABLE_DROP': 'steerableDrop'
+                            }
+                            crosstype = crosstype_dic[
+                                keys_and_values['CROSS_TYPE']
+                            ]
+                        idname = "_wizard:crossType"
+                        self.click(idname)
+                        loc = "//div[@id='%s_menu']/table/tbody/\
+                            tr/td/img[@alt='%s']" % (idname, crosstype)
+                        self.click(loc)
+                        return True
+                        # ports
+
+                        # channel number
+
+                        # Facility type
+
+                        # Path node
+
                     else:
+                        # for Advanced creation
                         # then check Advanced checkbox
                         # click it if it's not checked
                         loc = "//*[@id='showAdvancedPanel']"
@@ -580,8 +610,6 @@ class NEDSession(NEDdriver):
                         loc = "_%s;add-connection" % bladename
                         self.click(loc)
                         self._wait_loading()
-                        print('check2')
-                        return
                         # changes on 06/12/2018: end
                         # direction:
                         direction = '(A) -> (B)'
@@ -620,74 +648,47 @@ class NEDSession(NEDdriver):
                         self.click("%sRadio" % conn_type)
                         self._wait_loading()
 
-                    # temp code: end
-                    # # then check Advanced checkbox
-                    # # click it if it's not checked
-                    # loc = "//*[@id='showAdvancedPanel']"
-                    # checkbox_state = self[loc].get_attribute('aria-pressed')
-                    # if checkbox_state == 'false':
-                    #     self.click(loc)
-                    # # click "Add Connection"
-                    # blade = 'Optical Channels'
-                    # loc = "_%s;add-connection" % bladename
-                    # self.click(loc)
-                    # self._wait_loading()
-                    # # changes on 06/12/2018: end
-                    # # direction:
-                    # direction = '(A) -> (B)'
-                    # if 'TYPE__CRS' in keys_and_values:
-                    #     if keys_and_values['TYPE__CRS'] == "2WAY":
-                    #         direction = '(A) <-> (B)'
-                    # self.set_value('wizard', 'direction', direction)
+                        # Channel number
+                        ch_no = aidfrom.split('-')[-1]  # for VCH and new OTLG
+                        if aidtype == 'OTLG':
+                            if port_from[0] in ['C', 'N']:
+                                ch_no = self._otlg_to_lambda(port_to[1:])
+                        self.set_value('wizard', 'channelNumber', ch_no)
 
-                    # # super channel
-                    # if aidtype == 'OTLG':
-                    #     loc = "//input[@id='wizard;channel-group' and " + \
-                    #         "(not (@aria-pressed) or @aria-pressed='false')]"
-                    #     self.try_click(loc)
+                        # Local Port
+                        script = \
+                            "return window.webgui.wizard.localAid2label['%s']" % \
+                            aidfrom
+                        locallabel = self.driver.execute_script(script)
+                        self.set_value('wizard', 'localPort', locallabel)
 
-                    # Channel number
-                    ch_no = aidfrom.split('-')[-1]  # for VCH and new OTLG
-                    if aidtype == 'OTLG':
-                        if port_from[0] in ['C', 'N']:
-                            ch_no = self._otlg_to_lambda(port_to[1:])
-                    self.set_value('wizard', 'channelNumber', ch_no)
+                        # Linked Port
+                        script = \
+                            "return window.webgui.wizard.linkedAid2label['%s']" % \
+                            aidto
+                        linkedlabel = self.driver.execute_script(script)
+                        # fix on 6/26/2018: start
+                        # self.set_value('wizard', 'localPort', linkedlabel)                    
+                        self.set_value('wizard', 'linkedPort', linkedlabel)
+                        # fix on 6/26/2018: end
 
-                    # # Local Port
-                    # script = \
-                    #     "return window.webgui.wizard.localAid2label['%s']" % \
-                    #     aidfrom
-                    # locallabel = self.driver.execute_script(script)
-                    # self.set_value('wizard', 'localPort', locallabel)
+                        # Facility
+                        if 'TYPE__FACILITY' in keys_and_values:
+                            type_fac = self._jsdata.val2name[
+                                'TYPE__FACILITY',
+                                keys_and_values['TYPE__FACILITY']
+                            ]
+                            self.set_value(aid, 'TYPE__FACILITY', type_fac)
 
-                    # # Linked Port
-                    # script = \
-                    #     "return window.webgui.wizard.linkedAid2label['%s']" % \
-                    #     aidto
-                    # linkedlabel = self.driver.execute_script(script)
-                    # self.set_value('wizard', 'localPort', linkedlabel)
-
-                    # Facility
-                    if 'TYPE__FACILITY' in keys_and_values:
-                        # changes on 06/13/2018: start
-                        type_fac = self._jsdata.val2name[
-                            'TYPE__FACILITY', keys_and_values['TYPE__FACILITY']
-                        ]
-                        # changes on 06/13/2018: end
-                        # type_fac = self._jsdata.name2val[
-                        #     'TYPE__FACILITY', keys_and_values['TYPE__FACILITY']
-                        # ]
-                        self.set_value(aid, 'TYPE__FACILITY', type_fac)
-
-                    # Path node
-                    self.set_value(
-                        aid, 'PATH-NODE', keys_and_values['PATH-NODE'])
-                    if 'TYPE__CRS' in keys_and_values:
-                        if keys_and_values['TYPE__CRS'] == "2WAY":
-                            return_aid = "CRS_CH-%s,%s" % (aidto, aidfrom)
-                            self.set_value(
-                                return_aid, 'PATH-NODE',
-                                keys_and_values['PATH-NODE'])
+                        # Path node
+                        self.set_value(
+                            aid, 'PATH-NODE', keys_and_values['PATH-NODE'])
+                        if 'TYPE__CRS' in keys_and_values:
+                            if keys_and_values['TYPE__CRS'] == "2WAY":
+                                return_aid = "CRS_CH-%s,%s" % (aidto, aidfrom)
+                                self.set_value(
+                                    return_aid, 'PATH-NODE',
+                                    keys_and_values['PATH-NODE'])
                 elif typeeqpt == '10WXC10G':
                     # helpers variables
                     port_from = aidfrom.split('-')[3]

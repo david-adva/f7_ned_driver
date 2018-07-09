@@ -63,7 +63,7 @@ Crs-Create-EOU
     ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
     ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
-    Create Entity    ${crs_add}    PATH-NODE=1    EOU=${True}
+    Create Entity    ${crs_add}    PATH-NODE=1    EOU=${True}    CROSS_TYPE=ADD
     #    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL    EOU=${True}
 
 Vch-Create+Delete
