@@ -409,3 +409,38 @@ File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/F7Library/ned/__ini
 in def create_crsch(self, aid, **keys_and_values):
 original: self.set_value('wizard', 'localPort', linkedlabel)
 change:   self.set_value('wizard', 'linkedPort', linkedlabel)
+
+# ---------------------------------------------------------
+# bug scenario 12
+# ---------------------------------------------------------
+
+# action 12
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/NEDdriver/__init__.py
+in def seek_parameter(self, aid, param, value=None, edit=False, history=False):
+after: elif aidtype == 'SHELF':
+original:   loc = "//*[@id='_SHELF-%s;tree']/span" % shelf
+change:     # fix on 6/27/2018: start
+            self.change_appl('Configure')
+            # fix on 6/27/2018: end
+            loc = "//*[@id='_SHELF-%s;tree']/span" % shelf
+            # fix on 6/27/2018: start
+            self._wait_loading(loc)
+            # fix on 6/27/2018: end
+
+# ---------------------------------------------------------
+# bug scenario X
+# ---------------------------------------------------------
+
+
+# action X
+File /home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py
+in def _wait_loading(self, loc=''):
+original: while "//*[contains(@class,'loading') and @class!='init-loading']" in self\
+                  or "//*[@class!='init-loading']img[contains(@src,'/images/loadingAnimation.gif')]" in self\
+                  or timeout == 0:
+change:   while "//*[contains(@class,'loading') and @class!='init-loading']" in self\
+                  or "//*[@class!='init-loading']img[contains(@src,'/images/loadingAnimation.gif')]" in self\
+                  or timeout >= 0:
+
+original: while loc not in self or timeout == 0:
+change:   while loc not in self or timeout == 0:
