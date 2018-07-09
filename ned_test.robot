@@ -13,6 +13,16 @@ ${r2_slot}        1
 ${ch1}            19590
 
 *** Test Cases ***
+Sh-Create+Delete
+    Create Entity    SHELF-3    TYPE__EQUIPMENT=SH7HU    ADMIN=IS
+    Set Entity Param    FCU-3    ADMIN=DSBLD
+    Destroy Entity    FCU-3
+    Set Entity Param    SHELF-3    ADMIN=DSBLD
+    Destroy Entity    SHELF-3
+
+Sh-Create
+    Create Entity    SHELF-3    TYPE__EQUIPMENT=SH7HU    ADMIN=IS
+
 Mod-Create+Delete
     ${r1_mod}    Set Variable    MOD-${r1_sh}-${r1_slot}
     ${r2_mod}    Set Variable    MOD-${r2_sh}-${r2_slot}
@@ -81,6 +91,9 @@ Crs-Create+Delete
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
     Create Entity    ${crs_add}    PATH-NODE=1
     Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL
+    Sleep    10
+    Destroy Entity    ${crs_drop}
+    Destroy Entity    ${crs_add}
 
 Crs-Create
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
@@ -125,6 +138,12 @@ Om-Delete
 
 Mod-Delete
     Destroy Entity    ${aid}
+
+Sh-Delete
+    #    Set Entity Param    FCU-3    ADMIN=DSBLD
+    #    Destroy Entity    FCU-3
+    Set Entity Param    SHELF-3    ADMIN=MT
+    Destroy Entity    SHELF-3
 
 Get
     #    ${admin}    Get Entity Param    MOD-2-6    ADMIN
