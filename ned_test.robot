@@ -66,10 +66,11 @@ Crs-Create-EOU
     @{crosstype_list}    Create List    ADD    DROP    STEERABLE_DROP
     @{crosstype_passed_list}    Create List    ADD_DROP    STEERABLE_ADDDROP
     @{crosstype_failed_list}    Create List    2WAY_PASS    1WAY_PASS
-    :FOR    ${crosstype}    in    @{crosstype_list}
-    \    Create Entity    ${crs_add}    PATH-NODE=6    EOU=${True}    ALIAS=my_crs    CROSS_TYPE=${crosstype}
-    \    ...    TYPE__FACILITY=OTU3    PATH-NODE__REVERSE=4
-    #    Create Entity    ${crs_drop}    PATH-NODE=1    CONFIG__CRS=DROP    TYPE__FACILITY=OPTICAL    EOU=${True}
+    #    : FOR    ${crosstype}    IN    @{crosstype_list}
+    #    \    Create Entity    ${crs_add}    PATH-NODE=6    EOU=${True}    ALIAS=my_crs
+    ...    # CROSS_TYPE=${crosstype}    TYPE__FACILITY=OTU3    PATH-NODE__REVERSE=4
+    Create Entity    ${crs_add}    PATH-NODE=6    EOU=${True}    ALIAS=my_crs    CROSS_TYPE=ADD_DROP    TYPE__FACILITY=OTU3
+    ...    PATH-NODE__REVERSE=4
 
 Vch-Create+Delete
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
@@ -125,18 +126,26 @@ Crs-Set
     Set Entity Param    MOD-2-18    ADMIN=MT
 
 Crs-Delete
-    ${ch1}    Set Variable    19590
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
     ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
     ${r2_vch_n_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-N-${ch1}
     ${r2_vch_c2_ch1}    Set Variable    VCH-${r2_sh}-${r2_slot}-C2-${ch1}
     ${crs_add}    Set Variable    CRS_CH-${r1_vch_c1_ch1},${r1_vch_n_ch1}
     ${crs_drop}    Set Variable    CRS_CH-${r1_vch_n_ch1},${r1_vch_c1_ch1}
+    #    Destroy Entity    ${crs_drop}
     Destroy Entity    ${crs_add}
-    Destroy Entity    ${crs_drop}
+
+Vch-Set
+    ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
+    ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
+    Set Entity Param    ${r1_vch_c1_ch1}    ADMIN=MT
+    Set Entity Param    ${r1_vch_n_ch1}    ADMIN=MT
 
 Vch-Delete
-    Destroy Entity    ${aid}
+    ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
+    ${r1_vch_c1_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-C1-${ch1}
+    Destroy Entity    ${r1_vch_c1_ch1}
+    Destroy Entity    ${r1_vch_c1_ch1}
 
 Om-Delete
     Destroy Entity    ${aid}

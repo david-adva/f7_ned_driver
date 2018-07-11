@@ -593,11 +593,15 @@ class NEDSession(NEDdriver):
                         self._wait_loading()
 
                         # Local Port
-                        script = \
-                            "return window.webgui.wizard.localAid2label['%s']" % \
-                            aidfrom
-                        locallabel = self.driver.execute_script(script)
-                        self.set_value('wizard', 'fromPoint', locallabel)
+                        # script = \
+                        #     "return window.webgui.wizard.localAid2label['%s']" % \
+                        #     aidfrom
+                        # locallabel = self.driver.execute_script(script)
+                        # self.set_value('wizard', 'fromPoint', locallabel)
+                        idname = "_wizard:fromPoint"
+                        loc = "//*[@id='%s']" % idname
+                        local_port = self[loc].text
+                        print('Local Port = %s' % local_port)
 
                         # Linked Port
                         # script = \
@@ -605,6 +609,10 @@ class NEDSession(NEDdriver):
                         #     aidto
                         # linkedlabel = self.driver.execute_script(script)
                         # self.set_value('wizard', 'toPoint', linkedlabel)
+                        idname = "_wizard:toPoint"
+                        loc = "//*[@id='%s']" % idname
+                        linked_port = self[loc].text
+                        print('Linked Port = %s' % linked_port)
 
                         # channel number
                         ch_no = aidfrom.split('-')[-1]
@@ -638,7 +646,6 @@ class NEDSession(NEDdriver):
                             self.set_value(
                                 'NE', 'ALIAS',
                                 keys_and_values['ALIAS'])
-                        return True
 
                     else:
                         # for Advanced creation
@@ -796,12 +803,12 @@ class NEDSession(NEDdriver):
                             self.set_value(return_aid, 'CONN', conn)
 
                 # Clicking ADD:
-                # self.click('_%s;add' % wiz)
-                # self._wait_loading()
+                self.click('_%s;add' % wiz)
+                self._wait_loading()
 
                 # click Cancel
-                self.click('_%s;cancel' % wiz)
-                self._wait_loading()                
+                # self.click('_%s;cancel' % wiz)
+                # self._wait_loading()                
 
         except Exception as ex:
             self.try_click("//span[@title='Press ESC to close']")
