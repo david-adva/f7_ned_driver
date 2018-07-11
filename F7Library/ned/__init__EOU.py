@@ -569,33 +569,76 @@ class NEDSession(NEDdriver):
                         loc = "_%s;add-channel" % bladename
                         self.click(loc)
                         self._wait_loading()
+
                         # CrossType
-                        if 'CROSS_TYPE' in keys_and_values:
-                            crosstype_dic = {
-                                "2WAY_PASS": 'passThrough',
-                                'ADD_DROP': 'addDrop',
-                                'STEERABLE_ADDDROP': 'steerableAddDrop',
-                                '1WAY_PASS': 'passThru',
-                                'ADD': 'add',
-                                'DROP': 'drop',
-                                'STEERABLE_DROP': 'steerableDrop'
-                            }
-                            crosstype = crosstype_dic[
-                                keys_and_values['CROSS_TYPE']
-                            ]
+                        crosstype_dic = {
+                            "2WAY_PASS": 'passThrough',
+                            'ADD_DROP': 'addDrop',
+                            'STEERABLE_ADDDROP': 'steerableAddDrop',
+                            '1WAY_PASS': 'passThru',
+                            'ADD': 'add',
+                            'DROP': 'drop',
+                            'STEERABLE_DROP': 'steerableDrop'
+                        }
+                        crosstype = crosstype_dic[
+                            keys_and_values['CROSS_TYPE']
+                        ]
+                        # if the element id is "_wizard;crossType"
+                        # use self.set_value('wizard', 'crossType', crosstype)
                         idname = "_wizard:crossType"
                         self.click(idname)
                         loc = "//div[@id='%s_menu']/table/tbody/\
                             tr/td/img[@alt='%s']" % (idname, crosstype)
                         self.click(loc)
-                        return True
-                        # ports
+                        self._wait_loading()
+
+                        # Local Port
+                        script = \
+                            "return window.webgui.wizard.localAid2label['%s']" % \
+                            aidfrom
+                        locallabel = self.driver.execute_script(script)
+                        self.set_value('wizard', 'fromPoint', locallabel)
+
+                        # Linked Port
+                        # script = \
+                        #     "return window.webgui.wizard.linkedAid2label['%s']" % \
+                        #     aidto
+                        # linkedlabel = self.driver.execute_script(script)
+                        # self.set_value('wizard', 'toPoint', linkedlabel)
 
                         # channel number
+                        ch_no = aidfrom.split('-')[-1]
+                        self.set_value('NE', 'CHANNEL__PROVISION', ch_no)
 
-                        # Facility type
+                        # channel bandwidth: not settable
+
+                        # Facility type: default value 'Optical'
+                        if 'TYPE__FACILITY' in keys_and_values:
+                            type_fac = self._jsdata.val2name[
+                                'TYPE__FACILITY',
+                                keys_and_values['TYPE__FACILITY']
+                            ]
+                            self.set_value('NE', 'TYPE__FACILITY', type_fac)
 
                         # Path node
+                        if 'PATH-NODE' in keys_and_values:
+                            self.set_value(
+                                'NE', 'PATH-NODE',
+                                keys_and_values['PATH-NODE'])
+                        crosstype_2way = [
+                            'passThrough', 'addDrop', 'steerableAddDrop']
+                        if crosstype in crosstype_2way:
+                            if 'PATH-NODE__REVERSE' in keys_and_values:
+                                self.set_value(
+                                    'NE', 'PATH-NODE__REVERSE',
+                                    keys_and_values['PATH-NODE__REVERSE'])
+
+                        # User Label: default value ''
+                        if 'ALIAS' in keys_and_values:
+                            self.set_value(
+                                'NE', 'ALIAS',
+                                keys_and_values['ALIAS'])
+                        return True
 
                     else:
                         # for Advanced creation
@@ -753,8 +796,12 @@ class NEDSession(NEDdriver):
                             self.set_value(return_aid, 'CONN', conn)
 
                 # Clicking ADD:
-                self.click('_%s;add' % wiz)
-                self._wait_loading()
+                # self.click('_%s;add' % wiz)
+                # self._wait_loading()
+
+                # click Cancel
+                self.click('_%s;cancel' % wiz)
+                self._wait_loading()                
 
         except Exception as ex:
             self.try_click("//span[@title='Press ESC to close']")
