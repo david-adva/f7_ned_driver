@@ -151,6 +151,8 @@ original: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td[contains(.,'%s
 change:   loc = "//div[contains(@id,'%s_menu')]/table/tbody/\
               tr/td[contains(.,'%s')]" % (idname, value)
 
+# fix committed to branch 'bug#3519'
+
 # ---------------------------------------------------------
 # bug scenario 4
 # error msg for
@@ -243,6 +245,8 @@ original: self.click("//*[@id='%s_popup']" % idname)
 change: loc = "//*[@id='%s_popup']" % idname
         self._wait_loading(loc)
         self.click(loc)
+
+# fix committed to branch 'bug#3518'
 
 # ---------------------------------------------------------
 # bug scenario 6
