@@ -593,26 +593,32 @@ class NEDSession(NEDdriver):
                         self._wait_loading()
 
                         # Local Port
-                        # script = \
-                        #     "return window.webgui.wizard.localAid2label['%s']" % \
-                        #     aidfrom
-                        # locallabel = self.driver.execute_script(script)
-                        # self.set_value('wizard', 'fromPoint', locallabel)
+                        locallabel = aidfrom.split('-', 1)[1].rsplit('-', 1)[0]
+                        # if the element id is "_wizard;fromPoint"
+                        # use self.set_value('wizard', 'fromPoint', locallabel)
                         idname = "_wizard:fromPoint"
                         loc = "//*[@id='%s']" % idname
-                        local_port = self[loc].text
-                        print('Local Port = %s' % local_port)
+                        if self[loc].get_attribute('aria-disabled') == 'false':
+                            # only if the element is clickable
+                            self.click(idname)
+                            loc = "//div[@id='%s_menu']/table/tbody/tr\
+                                /td[contains(., '%s')]" % (idname, locallabel)
+                            self.click(loc)
+                            self._wait_loading()
 
                         # Linked Port
-                        # script = \
-                        #     "return window.webgui.wizard.linkedAid2label['%s']" % \
-                        #     aidto
-                        # linkedlabel = self.driver.execute_script(script)
-                        # self.set_value('wizard', 'toPoint', linkedlabel)
+                        linkedlabel = aidto.split('-', 1)[1].rsplit('-', 1)[0]
+                        # if the element id is "_wizard;toPoint"
+                        # use self.set_value('wizard', 'toPoint', linkedlabel)
                         idname = "_wizard:toPoint"
                         loc = "//*[@id='%s']" % idname
-                        linked_port = self[loc].text
-                        print('Linked Port = %s' % linked_port)
+                        if self[loc].get_attribute('aria-disabled') == 'false':
+                            # only if the element is clickable
+                            self.click(idname)
+                            loc = "//div[@id='%s_menu']/table/tbody/tr\
+                                /td[contains(., '%s')]" % (idname, linkedlabel)
+                            self.click(loc)
+                            self._wait_loading()
 
                         # channel number
                         ch_no = aidfrom.split('-')[-1]
