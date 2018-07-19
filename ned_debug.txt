@@ -436,6 +436,19 @@ change:     # fix on 6/27/2018: start
 # fix committed to branch 'bug#3517', then merged to branch 'atl'
 
 # ---------------------------------------------------------
+# bug scenario 13: not support EOU for ROADM
+# ---------------------------------------------------------
+
+# action 13
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/NEDdriver/__init__.py
+in def create_crsch(self, aid, EOU=False, **keys_and_values):
+after:  loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+        self.click(loc)
+added: if EOU:
+            ...
+        else:
+
+# ---------------------------------------------------------
 # bug scenario X
 # ---------------------------------------------------------
 
