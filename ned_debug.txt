@@ -448,10 +448,11 @@ added: if EOU:
             ...
         else:
 
+# fix committed to branch 'atl'
+
 # ---------------------------------------------------------
 # bug scenario X
 # ---------------------------------------------------------
-
 
 # action X
 File /home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py
