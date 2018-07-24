@@ -151,9 +151,11 @@ original: loc = "//div[contains(@id,'%s_menu')]/table/tbody/tr[td[contains(.,'%s
 change:   loc = "//div[contains(@id,'%s_menu')]/table/tbody/\
               tr/td[contains(.,'%s')]" % (idname, value)
 
+# fix committed to branch 'bug#3519', then merged to branch 'atl'
+
 # ---------------------------------------------------------
 # bug scenario 4
-# error msg for
+# failed to create MOD
 # Create Entity    MOD-2-8    ROADMNO=3
 # provision an inserted module
 # ---------------------------------------------------------
@@ -197,6 +199,8 @@ in def create_module(self, aid, **keys_and_values):
 added: self._wait_loading(loc)
 after: # click on the shelf
        loc = "//span[@id='_SHELF-%s;tree']/span" % shelf
+
+# fix committed to branch 'atl'
 
 # ---------------------------------------------------------
 # bug scenario 5
@@ -244,9 +248,11 @@ change: loc = "//*[@id='%s_popup']" % idname
         self._wait_loading(loc)
         self.click(loc)
 
+# fix committed to branch 'bug#3518', then merged to branch 'atl'
+
 # ---------------------------------------------------------
 # bug scenario 6
-# error msg for
+# can't create OM for ROADM
 # Create Entity    OM-11-1-N
 # ---------------------------------------------------------
 
@@ -262,7 +268,7 @@ added:  # to create OM
 
 # ---------------------------------------------------------
 # bug scenario 7
-# error msg for
+# can't create VCH for ROADM
 # Create Entity    VCH-11-1-N-19590
 # ---------------------------------------------------------
 
@@ -295,7 +301,7 @@ added:  # to create VCH
 
 # ---------------------------------------------------------
 # bug scenario 8
-# error msg for
+# can't create CRS for ROADM
 # Create Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590    PATH-NODE=1
 # ---------------------------------------------------------
 
@@ -327,7 +333,7 @@ added:  # changes on 06/12/2018: start
 
 # ---------------------------------------------------------
 # bug scenario 9
-# error msg for
+# can't delete CRS for ROADM
 # Delete Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590
 # ---------------------------------------------------------
 
@@ -353,7 +359,7 @@ added:  # changes on 06/12/2018: start
 
 # ---------------------------------------------------------
 # bug scenario 10
-# error msg for
+# can't set TYPE__FACILITY when creating CRS of ROADM
 # Create Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590    PATH-NODE=1    TYPE__FACILITY=OPTICAL
 # ---------------------------------------------------------
 
@@ -400,7 +406,7 @@ changes:    type_fac = self._jsdata.val2name[
 
 # ---------------------------------------------------------
 # bug scenario 11
-# error msg for
+# can't set 'Linked Port' when creating CRS for ROADM
 # Create Entity    CRS_CH-VCH-11-1-N-19590,VCH-11-1-C1-19590
 # ---------------------------------------------------------
 
@@ -427,10 +433,26 @@ change:     # fix on 6/27/2018: start
             self._wait_loading(loc)
             # fix on 6/27/2018: end
 
+# fix committed to branch 'bug#3517', then merged to branch 'atl'
+
+# ---------------------------------------------------------
+# bug scenario 13: not support EOU for ROADM
+# ---------------------------------------------------------
+
+# action 13
+File /home/user/.virtualenvs/rfw/lib/python2.7/site-packages/NEDdriver/__init__.py
+in def create_crsch(self, aid, EOU=False, **keys_and_values):
+after:  loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
+        self.click(loc)
+added: if EOU:
+            ...
+        else:
+
+# fix committed to branch 'atl'
+
 # ---------------------------------------------------------
 # bug scenario X
 # ---------------------------------------------------------
-
 
 # action X
 File /home/user/.virtualenvs/rfw/local/lib/python2.7/site-packages/NEDdriver/__init__.py

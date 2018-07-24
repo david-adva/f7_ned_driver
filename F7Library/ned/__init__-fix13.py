@@ -447,6 +447,14 @@ class NEDSession(NEDdriver):
 
         1 - CRS_CH for WCH/OWLG
         2 - CRS_CH for VCH,CH...
+
+        To create CRS for a ROADM using Ease of Use (EOU):
+        Besides normal keys_and_values for creating ROADM CRS, set these:
+        1. EOU = True
+        2. CROSS_TYPE = 2WAY_PASS | ADD_DROP | STEERABLE_ADDDROP |
+                        1WAY_PASS | ADD | DROP | STEERABLE_DROP
+        3. PATH-NODE__REVERSE (if CROSS_TYPE is
+                        2WAY_PASS | ADD_DROP | STEERABLE_ADDDROP)
         """
         try:
             (aidfrom, aidto) = str(aid).split('CRS_CH-')[1].split(',')
@@ -555,13 +563,11 @@ class NEDSession(NEDdriver):
 
                 # two different wizards: first for ROADMs
                 if 'ROADM' in typeeqpt or '9CCM' in typeeqpt:
-                    # changes on 06/12/2018: start
                     # firstly clear the drop down filter
                     loc = "//*[@id='_opticalchannels;filter']/tbody/tr/td[2]"
                     self.click(loc)
 
-                    if EOU:
-                        # for EOU create
+                    if EOU:     # for EOU create
                         # ignore "Advanced" checkbox
 
                         # click "Add"
@@ -587,24 +593,38 @@ class NEDSession(NEDdriver):
                         # use self.set_value('wizard', 'crossType', crosstype)
                         idname = "_wizard:crossType"
                         self.click(idname)
-                        loc = "//div[@id='%s_menu']/table/tbody/\
-                            tr/td/img[@alt='%s']" % (idname, crosstype)
+                        loc = "//div[@id='%s_menu']/table/tbody/tr\
+                            /td/img[@alt='%s']" % (idname, crosstype)
                         self.click(loc)
                         self._wait_loading()
 
                         # Local Port
-                        script = \
-                            "return window.webgui.wizard.localAid2label['%s']" % \
-                            aidfrom
-                        locallabel = self.driver.execute_script(script)
-                        self.set_value('wizard', 'fromPoint', locallabel)
+                        locallabel = aidfrom.split('-', 1)[1].rsplit('-', 1)[0]
+                        # if the element id is "_wizard;fromPoint"
+                        # use self.set_value('wizard', 'fromPoint', locallabel)
+                        idname = "_wizard:fromPoint"
+                        loc = "//*[@id='%s']" % idname
+                        if self[loc].get_attribute('aria-disabled') == 'false':
+                            # only if the element is clickable
+                            self.click(idname)
+                            loc = "//div[@id='%s_menu']/table/tbody/tr\
+                                /td[contains(., '%s')]" % (idname, locallabel)
+                            self.click(loc)
+                            self._wait_loading()
 
                         # Linked Port
-                        # script = \
-                        #     "return window.webgui.wizard.linkedAid2label['%s']" % \
-                        #     aidto
-                        # linkedlabel = self.driver.execute_script(script)
-                        # self.set_value('wizard', 'toPoint', linkedlabel)
+                        linkedlabel = aidto.split('-', 1)[1].rsplit('-', 1)[0]
+                        # if the element id is "_wizard;toPoint"
+                        # use self.set_value('wizard', 'toPoint', linkedlabel)
+                        idname = "_wizard:toPoint"
+                        loc = "//*[@id='%s']" % idname
+                        if self[loc].get_attribute('aria-disabled') == 'false':
+                            # only if the element is clickable
+                            self.click(idname)
+                            loc = "//div[@id='%s_menu']/table/tbody/tr\
+                                /td[contains(., '%s')]" % (idname, linkedlabel)
+                            self.click(loc)
+                            self._wait_loading()
 
                         # channel number
                         ch_no = aidfrom.split('-')[-1]
@@ -625,10 +645,11 @@ class NEDSession(NEDdriver):
                             self.set_value(
                                 'NE', 'PATH-NODE',
                                 keys_and_values['PATH-NODE'])
-                        crosstype_2way = [
-                            'passThrough', 'addDrop', 'steerableAddDrop']
-                        if crosstype in crosstype_2way:
-                            if 'PATH-NODE__REVERSE' in keys_and_values:
+
+                        if 'PATH-NODE__REVERSE' in keys_and_values:
+                            crosstype_2way = [
+                                'passThrough', 'addDrop', 'steerableAddDrop']
+                            if crosstype in crosstype_2way:
                                 self.set_value(
                                     'NE', 'PATH-NODE__REVERSE',
                                     keys_and_values['PATH-NODE__REVERSE'])
@@ -638,22 +659,22 @@ class NEDSession(NEDdriver):
                             self.set_value(
                                 'NE', 'ALIAS',
                                 keys_and_values['ALIAS'])
-                        return True
 
-                    else:
-                        # for Advanced creation
-                        # then check Advanced checkbox
-                        # click it if it's not checked
+                    else:   # for Advanced create
+                        # then check "Advanced" checkbox
+                        # click it if it's not yet checked
                         loc = "//*[@id='showAdvancedPanel']"
-                        checkbox_state = self[loc].get_attribute('aria-pressed')
+                        checkbox_state = \
+                            self[loc].get_attribute('aria-pressed')
                         if checkbox_state == 'false':
                             self.click(loc)
+
                         # click "Add Connection"
                         blade = 'Optical Channels'
                         loc = "_%s;add-connection" % bladename
                         self.click(loc)
                         self._wait_loading()
-                        # changes on 06/12/2018: end
+
                         # direction:
                         direction = '(A) -> (B)'
                         if 'TYPE__CRS' in keys_and_values:
@@ -663,8 +684,10 @@ class NEDSession(NEDdriver):
 
                         # super channel
                         if aidtype == 'OTLG':
-                            loc = "//input[@id='wizard;channel-group' and " + \
-                                "(not (@aria-pressed) or @aria-pressed='false')]"
+                            loc = "//input[\
+                                @id='wizard;channel-group' and \
+                                (not (@aria-pressed) or @aria-pressed='false')\
+                                ]"
                             self.try_click(loc)
 
                         # connection type:
@@ -685,7 +708,7 @@ class NEDSession(NEDdriver):
                                 if keys_and_values['TYPE__CRS'] == "2WAY":
                                     conn_type = 'addDrop'
 
-                        if not aidfrom.split("-")[2:3] == aidto.split("-")[2:3]:
+                        if aidfrom.split("-")[2:3] != aidto.split("-")[2:3]:
                             conn_type = 'steerable%s' % conn_type.capitalize()
 
                         self.click("%sRadio" % conn_type)
@@ -699,19 +722,19 @@ class NEDSession(NEDdriver):
                         self.set_value('wizard', 'channelNumber', ch_no)
 
                         # Local Port
-                        script = \
-                            "return window.webgui.wizard.localAid2label['%s']" % \
-                            aidfrom
+                        script = "return \
+                            window.webgui.wizard.localAid2label['%s']" \
+                            % aidfrom
                         locallabel = self.driver.execute_script(script)
                         self.set_value('wizard', 'localPort', locallabel)
 
                         # Linked Port
-                        script = \
-                            "return window.webgui.wizard.linkedAid2label['%s']" % \
-                            aidto
+                        script = "return \
+                            window.webgui.wizard.linkedAid2label['%s']" \
+                            % aidto
                         linkedlabel = self.driver.execute_script(script)
                         # fix on 6/26/2018: start
-                        # self.set_value('wizard', 'localPort', linkedlabel)                    
+                        # self.set_value('wizard', 'localPort', linkedlabel)
                         self.set_value('wizard', 'linkedPort', linkedlabel)
                         # fix on 6/26/2018: end
 
@@ -732,6 +755,7 @@ class NEDSession(NEDdriver):
                                 self.set_value(
                                     return_aid, 'PATH-NODE',
                                     keys_and_values['PATH-NODE'])
+
                 elif typeeqpt == '10WXC10G':
                     # helpers variables
                     port_from = aidfrom.split('-')[3]
@@ -796,12 +820,8 @@ class NEDSession(NEDdriver):
                             self.set_value(return_aid, 'CONN', conn)
 
                 # Clicking ADD:
-                # self.click('_%s;add' % wiz)
-                # self._wait_loading()
-
-                # click Cancel
-                self.click('_%s;cancel' % wiz)
-                self._wait_loading()                
+                self.click('_%s;add' % wiz)
+                self._wait_loading()
 
         except Exception as ex:
             self.try_click("//span[@title='Press ESC to close']")
