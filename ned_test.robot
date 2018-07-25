@@ -66,13 +66,12 @@ Crs-Create-EOU
     @{crosstype_list}    Create List    ADD    DROP    STEERABLE_DROP
     @{crosstype_passed_list}    Create List    ADD_DROP    STEERABLE_ADDDROP
     @{crosstype_failed_list}    Create List    2WAY_PASS    1WAY_PASS
-    Create Entity    ${crs_add}    PATH-NODE=6    EOU=${True}    ALIAS=my_crs    CROSS_TYPE=ADD    TYPE__FACILITY=OTU3
-    ...    PATH-NODE__REVERSE=4
+    #    Create Entity    ${crs_add}    PATH-NODE=6    EOU=${True}    ALIAS=my_crs    CROSS_TYPE=ADD
+    ...    # TYPE__FACILITY=OTU3    PATH-NODE__REVERSE=4
     #    Create Entity    ${crs_drop}    PATH-NODE=2    EOU=${True}    ALIAS=my_crs    CROSS_TYPE=DROP
     ...    # TYPE__FACILITY=OTU3    PATH-NODE__REVERSE=3
-    #    :FOR    ${crosstype}    IN    @{crosstype_list}
-    #    \    Create Entity    ${crs_add}    PATH-NODE=6    EOU=${True}    ALIAS=my_crs
-    ...    # CROSS_TYPE=${crosstype}    TYPE__FACILITY=OTU3    PATH-NODE__REVERSE=4
+    Create Entity    ${crs_drop}    PATH-NODE=2    EOU=${True}    ALIAS=my_crs    CROSS_TYPE=ADD_DROP    TYPE__FACILITY=OTU3
+    ...    PATH-NODE__REVERSE=3
 
 Vch-Create+Delete
     ${r1_vch_n_ch1}    Set Variable    VCH-${r1_sh}-${r1_slot}-N-${ch1}
