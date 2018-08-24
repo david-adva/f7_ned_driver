@@ -1,0 +1,47 @@
+'''
+!! install crypto
+pip install -i https://pypi.org/pypi crypto
+'''
+
+import NEDdriver
+ned = NEDdriver
+j = ned.Jsdata('R16.2.1')  
+d = j.eqpt_variants 
+param = {'TYPE__EQUIPMENT': '4WCC10G'}
+
+
+import NEDdriver
+ned = NEDdriver.NEDdriver()
+param = {'TYPE__EQUIPMENT': '4WCC10G'}
+te = ned._eqpt_to_variant(param)
+
+
+import NEDdriver
+a = NEDdriver.NEDdriver()
+a.open_conn(<ip>)
+a.ned_login('admin', 'CHG')
+a._vari
+
+
+import F7Library
+a = F7Library.F7Library()
+a.open_connection('<ip>', 'ned')
+(a.OpenConnection('<ip>', 'ned'))
+a.CreateEntity('MOD-2-2', TYPE__EQUIPMENT='4WCC10G')
+a.DestroyEntity(<aid>)
+
+
+import AosGenericDTELibrary
+d = AosGenericDTELibrary.AosGenericDTELibrary()
+s = d.OpenSession('10.16.24.80', interface='CLI')
+s = d.OpenSession(ip, interface='CLI', port='614', uid='root', passwd='')
+
+
+from AosCLILibrary import AosCLILibrary
+cli = AosCLILibrary()
+
+
+from AosCliClient import CliSSHConnection
+ssh = CliSSHConnection()
+c = ssh.open('10.16.24.80', port='614')
+s = ssh.login('root', '')
